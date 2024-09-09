@@ -34,7 +34,7 @@ void Navegador::nuevaTab() {
 
 void Navegador::cerrarTab() {
 	if (tabs.size() > 1) {
-		std::list<Tab*>::iterator aux = std::next(iterActual);
+		std::list<Tab*>::iterator aux = std::prev(iterActual);
 		delete* iterActual;
 		iterActual = tabs.erase(iterActual);
 		iterActual = aux;
