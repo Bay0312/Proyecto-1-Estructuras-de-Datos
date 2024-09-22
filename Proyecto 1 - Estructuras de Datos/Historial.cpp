@@ -38,7 +38,7 @@ Historial* Historial::recuperar(std::ifstream& in) {
 
     for (size_t i = 0; i < numSitios; ++i) {
         SitioWeb* sitio = new SitioWeb();
-        sitio->recuperar(strm);
+        sitio->recuperar(in);
         visitados.push_back(sitio);
     }
 
