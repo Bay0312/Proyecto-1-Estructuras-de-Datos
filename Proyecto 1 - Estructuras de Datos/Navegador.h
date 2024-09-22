@@ -45,8 +45,9 @@ public:
 	std::string toStringMarcadores();
 
 	//Persistencia de datos
-	virtual void guardar(std::fstream&);
-	virtual Navegador* recuperar(std::fstream&);
+	void guardar(std::ofstream& out);
+	Navegador* recuperar(std::ifstream& in);
+
 
 };
 

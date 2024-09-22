@@ -31,9 +31,10 @@ public:
 
 	std::string toString();
 
+
 	//Persistencia de datos
-	virtual void guardar(std::fstream&);
-	Marcador* recuperar(std::fstream&);
+	void guardar(std::ofstream& out);
+	Marcador* recuperar(std::ifstream& in);
 
 };
 

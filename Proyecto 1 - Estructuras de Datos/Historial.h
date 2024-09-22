@@ -18,9 +18,10 @@ public:
 	void agregarSitio(SitioWeb*);
 	std::string toString();
 
+
 	//Persistencia de datos
-	virtual void guardar(std::fstream&);
-	virtual Historial* recuperar(std::fstream&);
+	void guardar(std::ofstream& out);
+	Historial* recuperar(std::ifstream& in);
 
 };
 

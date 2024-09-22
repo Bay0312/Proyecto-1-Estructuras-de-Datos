@@ -29,8 +29,8 @@ public:
 	std::string toString();
 
 	//Persistencia de datos
-	virtual void guardar(std::fstream&);
-	SitioWeb* recuperar(std::fstream&);
+	void guardar(std::ofstream& out);
+	SitioWeb* recuperar(std::ifstream& in);
 
 };
 

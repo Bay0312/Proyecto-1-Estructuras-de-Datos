@@ -21,9 +21,10 @@ public:
 	SitioWeb* getVisitadosPorPos(int);
 	std::string toString();
 
+
 	//Persistencia de datos
-	virtual void guardar(std::fstream&);
-	virtual Tab* recuperar(std::fstream&);
+	void guardar(std::ofstream& out);
+	Tab* recuperar(std::ifstream& in);
 
 	//void cambiaModoIncognito();
 

@@ -23,20 +23,18 @@ std::string Historial::toString() {
 	return str;
 }
 
-void Historial::guardar(std::fstream& strm) {
-    strm << visitados.size() << SEPARA_VALOR;
+void Historial::guardar(std::ofstream& out) {
+    size_t numSitios = visitados.size();
+    out.write(reinterpret_cast<char*>(&numSitios), sizeof(numSitios));
 
-    // Guardar cada sitio web
     for (auto sitio : visitados) {
-        sitio->guardar(strm);
+        sitio->guardar(out);
     }
-    strm << SEPARA_REGISTRO;
 }
 
-Historial* Historial::recuperar(std::fstream& strm) {
+Historial* Historial::recuperar(std::ifstream& in) {
     size_t numSitios;
-    strm >> numSitios;
-    strm.ignore(1); // Ignorar el separador
+    in.read(reinterpret_cast<char*>(&numSitios), sizeof(numSitios));
 
     for (size_t i = 0; i < numSitios; ++i) {
         SitioWeb* sitio = new SitioWeb();
@@ -46,3 +44,4 @@ Historial* Historial::recuperar(std::fstream& strm) {
 
     return this;
 }
+

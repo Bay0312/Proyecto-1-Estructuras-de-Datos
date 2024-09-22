@@ -127,54 +127,46 @@ std::string Navegador::toStringMarcadores() {
 	return s.str();
 }
 
-void Navegador::guardar(std::fstream& strm) {
-	// Guardar si el navegador está en modo incognito
-	strm << modoIncognito << SEPARA_VALOR;
-	strm << tabs.size() << SEPARA_VALOR;
+void Navegador::guardar(std::ofstream& out) {
+	out.write(reinterpret_cast<char*>(&modoIncognito), sizeof(modoIncognito));
 
+	size_t numTabs = tabs.size();
+	out.write(reinterpret_cast<char*>(&numTabs), sizeof(numTabs));
 	for (auto tab : tabs) {
-		tab->guardar(strm);
+		tab->guardar(out);
 	}
 
-	auto posTabActual = std::distance(tabs.begin(), iterActual);
-	strm << posTabActual << SEPARA_VALOR;
+	size_t posTabActual = std::distance(tabs.begin(), iterActual);
+	out.write(reinterpret_cast<char*>(&posTabActual), sizeof(posTabActual));
 
-	strm << marcadores.size() << SEPARA_VALOR;
+	size_t numMarcadores = marcadores.size();
+	out.write(reinterpret_cast<char*>(&numMarcadores), sizeof(numMarcadores));
 	for (auto marcador : marcadores) {
-		marcador->guardar(strm);
+		marcador->guardar(out);
 	}
-	strm << SEPARA_REGISTRO;
 }
 
-Navegador* Navegador::recuperar(std::fstream& strm) {
-	// Recuperar modo incognito
-	strm >> modoIncognito;
-	strm.ignore(1); // Ignorar el separador
+Navegador* Navegador::recuperar(std::ifstream& in) {
+	in.read(reinterpret_cast<char*>(&modoIncognito), sizeof(modoIncognito));
 
 	size_t numTabs;
-	strm >> numTabs;
-	strm.ignore(1); // Ignorar el separador
-
+	in.read(reinterpret_cast<char*>(&numTabs), sizeof(numTabs));
 	for (size_t i = 0; i < numTabs; ++i) {
 		Tab* tab = new Tab();
-		tab->recuperar(strm);
+		tab->recuperar(in);
 		tabs.push_back(tab);
 	}
 
 	size_t posTabActual;
-	strm >> posTabActual;
-	strm.ignore(1); // Ignorar el separador
+	in.read(reinterpret_cast<char*>(&posTabActual), sizeof(posTabActual));
 	iterActual = tabs.begin();
 	std::advance(iterActual, posTabActual);
 
-	// Recuperar los marcadores
 	size_t numMarcadores;
-	strm >> numMarcadores;
-	strm.ignore(1); // Ignorar el separador
-
+	in.read(reinterpret_cast<char*>(&numMarcadores), sizeof(numMarcadores));
 	for (size_t i = 0; i < numMarcadores; ++i) {
 		Marcador* marcador = new Marcador();
-		marcador->recuperar(strm);
+		marcador->recuperar(in);
 		marcadores.push_back(marcador);
 	}
 

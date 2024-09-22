@@ -59,27 +59,31 @@ std::string Tab::toString() {
 	return historial->toString();
 }
 
-void Tab::guardar(std::fstream& strm) {
-	strm << nombre << SEPARA_VALOR;
+void Tab::guardar(std::ofstream& out) {
+	size_t nombreSize = nombre.size();
+	out.write(reinterpret_cast<char*>(&nombreSize), sizeof(nombreSize));
+	out.write(nombre.data(), nombreSize);
 
-	historial->guardar(strm);
+	historial->guardar(out);
 
-	auto posActual = std::distance(historial->getVisitados().begin(), iterActual);
-	strm << posActual << SEPARA_REGISTRO;
+	size_t posActual = std::distance(historial->getVisitados().begin(), iterActual);
+	out.write(reinterpret_cast<char*>(&posActual), sizeof(posActual));
 }
 
-Tab* Tab::recuperar(std::fstream& strm) {
-	std::getline(strm, nombre, SEPARA_VALOR);
+Tab* Tab::recuperar(std::ifstream& in) {
+	size_t nombreSize;
+	in.read(reinterpret_cast<char*>(&nombreSize), sizeof(nombreSize));
+	nombre.resize(nombreSize);
+	in.read(&nombre[0], nombreSize);
 
 	historial = new Historial();
-	historial->recuperar(strm);
+	historial->recuperar(in);
 
 	size_t posActual;
-	strm >> posActual;
-	strm.ignore(1); // Ignorar el separador
-
+	in.read(reinterpret_cast<char*>(&posActual), sizeof(posActual));
 	iterActual = historial->getVisitados().begin();
 	std::advance(iterActual, posActual);
 
 	return this;
 }
+

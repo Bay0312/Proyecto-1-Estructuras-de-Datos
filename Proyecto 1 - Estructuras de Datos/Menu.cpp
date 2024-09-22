@@ -1,9 +1,14 @@
 #include "Menu.h"
 
-Menu::Menu() : navegador{ new Navegador }, sitiosDisponibles { std::map<std::string, SitioWeb*>()} {
+Menu::Menu() : navegador{ new Navegador }, sitiosDisponibles{ std::map<std::string, SitioWeb*>() } {
 	cargarSitios("sitios.csv");
+	cargarDatos(); // Intentamos cargar los datos al iniciar
 }
-Menu::~Menu() { delete navegador; }
+
+Menu::~Menu() {
+	guardarDatos(); // Guardamos los datos al finalizar
+	delete navegador;
+}
 
 void Menu::menuPrincipal() {
 	int opcion = 0;
@@ -245,5 +250,21 @@ void Menu::cambiarConfiguracion() {
 			break;
 		}
 
+	}
+}
+
+void Menu::guardarDatos() {
+	std::ofstream archivo("datos.bin", std::ios::binary);
+	if (archivo.is_open()) {
+		navegador->guardar(archivo);
+		archivo.close();
+	}
+}
+
+void Menu::cargarDatos() {
+	std::ifstream archivo("datos.bin", std::ios::binary);
+	if (archivo.is_open()) {
+		navegador->recuperar(archivo);
+		archivo.close();
 	}
 }

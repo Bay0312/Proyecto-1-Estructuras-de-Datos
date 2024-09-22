@@ -20,38 +20,46 @@ std::string Marcador::toString() {
 	return str;
 }
 
-void Marcador::guardar(std::fstream& strm) {
-    strm << url << SEPARA_VALOR;
-    strm << titulo << SEPARA_VALOR;
+void Marcador::guardar(std::ofstream& out) {
+    size_t sizeUrl = url.size();
+    size_t sizeTitulo = titulo.size();
+    size_t sizeEtiquetas = etiquetas.size();
 
-    strm << etiquetas.size() << SEPARA_VALOR;
+    out.write(reinterpret_cast<char*>(&sizeUrl), sizeof(sizeUrl));
+    out.write(url.data(), sizeUrl);
 
+    out.write(reinterpret_cast<char*>(&sizeTitulo), sizeof(sizeTitulo));
+    out.write(titulo.data(), sizeTitulo);
+
+    out.write(reinterpret_cast<char*>(&sizeEtiquetas), sizeof(sizeEtiquetas));
     for (const auto& etiqueta : etiquetas) {
-        strm << etiqueta << SEPARA_VALOR;
+        size_t sizeEtiqueta = etiqueta.size();
+        out.write(reinterpret_cast<char*>(&sizeEtiqueta), sizeof(sizeEtiqueta));
+        out.write(etiqueta.data(), sizeEtiqueta);
     }
-
-    strm << SEPARA_REGISTRO;
 }
 
-
-Marcador* Marcador::recuperar(std::fstream& strm) {
+Marcador* Marcador::recuperar(std::ifstream& in) {
+    size_t sizeUrl, sizeTitulo, sizeEtiquetas;
     std::string tempUrl, tempTitulo;
-    size_t numEtiquetas;
 
-    if (!std::getline(strm, tempUrl, SEPARA_VALOR)) return nullptr;
-    if (!std::getline(strm, tempTitulo, SEPARA_VALOR)) return nullptr;
-    if (!(strm >> numEtiquetas))  return nullptr;
-    strm.ignore(1); // Ignorar el separador
+    in.read(reinterpret_cast<char*>(&sizeUrl), sizeof(sizeUrl));
+    tempUrl.resize(sizeUrl);
+    in.read(&tempUrl[0], sizeUrl);
 
+    in.read(reinterpret_cast<char*>(&sizeTitulo), sizeof(sizeTitulo));
+    tempTitulo.resize(sizeTitulo);
+    in.read(&tempTitulo[0], sizeTitulo);
+
+    in.read(reinterpret_cast<char*>(&sizeEtiquetas), sizeof(sizeEtiquetas));
     etiquetas.clear();
-    for (size_t i = 0; i < numEtiquetas; ++i) {
+    for (size_t i = 0; i < sizeEtiquetas; ++i) {
+        size_t sizeEtiqueta;
         std::string etiqueta;
-        if (std::getline(strm, etiqueta, SEPARA_VALOR)) {
-            etiquetas.push_back(etiqueta);
-        }
-        else {
-            return nullptr;
-        }
+        in.read(reinterpret_cast<char*>(&sizeEtiqueta), sizeof(sizeEtiqueta));
+        etiqueta.resize(sizeEtiqueta);
+        in.read(&etiqueta[0], sizeEtiqueta);
+        etiquetas.push_back(etiqueta);
     }
 
     this->url = tempUrl;
@@ -59,3 +67,4 @@ Marcador* Marcador::recuperar(std::fstream& strm) {
 
     return this;
 }
+

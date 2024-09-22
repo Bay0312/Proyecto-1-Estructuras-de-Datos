@@ -24,6 +24,10 @@ public:
 	void cargarSitios(std::string);
 	void cambiarConfiguracion();
 	SitioWeb* traeSitioWeb(std::string);
+
+	//Persistencia
+	void guardarDatos();
+	void cargarDatos();
 };
 
 #endif // !MENU_H

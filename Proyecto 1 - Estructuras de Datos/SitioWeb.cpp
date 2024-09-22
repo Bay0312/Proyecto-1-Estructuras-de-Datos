@@ -15,22 +15,40 @@ void SitioWeb::setDominio(std::string dominio) { this->dominio = dominio; }
 
 std::string SitioWeb::toString() { return "URL: " + url + "\nTitulo: " + titulo + "\nDominio: " + dominio; }
 
-void SitioWeb::guardar(std::fstream& strm) {
-	strm << url << SEPARA_VALOR;
-	strm << dominio << SEPARA_VALOR;
-	strm << titulo << SEPARA_REGISTRO;
+void SitioWeb::guardar(std::ofstream& out) {
+    size_t sizeUrl = url.size();
+    size_t sizeDominio = dominio.size();
+    size_t sizeTitulo = titulo.size();
+
+    out.write(reinterpret_cast<char*>(&sizeUrl), sizeof(sizeUrl));
+    out.write(url.data(), sizeUrl);
+
+    out.write(reinterpret_cast<char*>(&sizeDominio), sizeof(sizeDominio));
+    out.write(dominio.data(), sizeDominio);
+
+    out.write(reinterpret_cast<char*>(&sizeTitulo), sizeof(sizeTitulo));
+    out.write(titulo.data(), sizeTitulo);
 }
 
-SitioWeb* SitioWeb::recuperar(std::fstream& strm) {
-    std::string urlTemp, dominioTemp, tituloTemp;
+SitioWeb* SitioWeb::recuperar(std::ifstream& in) {
+    size_t sizeUrl, sizeDominio, sizeTitulo;
+    std::string tempUrl, tempDominio, tempTitulo;
 
-    if (!std::getline(strm, urlTemp, SEPARA_VALOR)) return nullptr;
-    if (!std::getline(strm, dominioTemp, SEPARA_VALOR)) return nullptr;
-    if (!std::getline(strm, tituloTemp, SEPARA_REGISTRO)) return nullptr;
+    in.read(reinterpret_cast<char*>(&sizeUrl), sizeof(sizeUrl));
+    tempUrl.resize(sizeUrl);
+    in.read(&tempUrl[0], sizeUrl);
 
-    this->url = urlTemp;
-    this->dominio = dominioTemp;
-    this->titulo = tituloTemp;
+    in.read(reinterpret_cast<char*>(&sizeDominio), sizeof(sizeDominio));
+    tempDominio.resize(sizeDominio);
+    in.read(&tempDominio[0], sizeDominio);
+
+    in.read(reinterpret_cast<char*>(&sizeTitulo), sizeof(sizeTitulo));
+    tempTitulo.resize(sizeTitulo);
+    in.read(&tempTitulo[0], sizeTitulo);
+
+    this->url = tempUrl;
+    this->dominio = tempDominio;
+    this->titulo = tempTitulo;
 
     return this;
 }
