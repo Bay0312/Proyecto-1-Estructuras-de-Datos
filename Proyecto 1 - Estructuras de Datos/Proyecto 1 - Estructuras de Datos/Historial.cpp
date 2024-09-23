@@ -5,6 +5,7 @@ Historial::~Historial() {
 	for (auto sitio : visitados) {
 		delete sitio.first;
 	}
+	
 }
 std::deque<std::pair<SitioWeb*, std::chrono::steady_clock::time_point>>& Historial::getVisitados() {
 	return visitados;
@@ -39,7 +40,6 @@ void Historial::retrocedeIter() {
 void Historial::avanzaIter() { if (iterActual != visitados.begin()) --iterActual; }
 
 void Historial::agregarSitio(SitioWeb* sitio) {
-	//cambiaTamanioHistorial(); //Antes de ingresar un nuevo sitio activamos esta funcion por si la cantidad de entradas fue cambiada a una mas baja.
 	if (visitados.size() == configuracion.getMaximoSitiosHistorial()) {
 		delete visitados.back().first;
 		visitados.pop_back();
@@ -50,7 +50,6 @@ void Historial::agregarSitio(SitioWeb* sitio) {
 
 
 int Historial::limpiarHistorial(){
-	//cambiaTamanioHistorial();
 	auto ahora = std::chrono::steady_clock::now();
 	int cant = 0, estado = 0;
 

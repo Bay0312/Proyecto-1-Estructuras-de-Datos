@@ -2,21 +2,20 @@
 
 Configuracion* Configuracion::instancia = nullptr;
 
-Configuracion::Configuracion() : tiempoExpiracionHistorial{ 1000 }, maximoSitiosHistorial{ 5 } {} //Por defecto 1 minuto y 5 sitios
+Configuracion::Configuracion() : tiempoExpiracionHistorial{ 180 }, maximoSitiosHistorial{ 5 } {} //Por defecto 2 minutos y 5 sitios
 Configuracion::Configuracion(int tiempo, int cantidad): tiempoExpiracionHistorial{ tiempo }, maximoSitiosHistorial{ cantidad } {}
-
-Configuracion::~Configuracion() {
-	if (instancia != nullptr) {
-		delete instancia;
-		instancia = nullptr;
-	}
-}
 
 Configuracion& Configuracion::getInstancia() {
 	if (instancia == nullptr) {
 		instancia = new Configuracion();
 	}
 	return *instancia;
+}
+
+void Configuracion::destruirInstancia() {
+	if (instancia != nullptr) {
+		delete instancia;
+	}
 }
 
 std::chrono::duration<int> Configuracion::getTiempoExpiracionHistorial() { return tiempoExpiracionHistorial; }

@@ -3,7 +3,12 @@
 Menu::Menu() : navegador{ new Navegador }, sitiosDisponibles { std::map<std::string, SitioWeb*>()} {
 	cargarSitios("sitios.csv");
 }
-Menu::~Menu() { delete navegador; }
+Menu::~Menu() { 
+	delete navegador; 
+	for (auto& sitio : sitiosDisponibles) {
+		delete sitio.second;
+	}
+}
 
 void Menu::menuPrincipal() {
 	int opcion = 0;
@@ -23,7 +28,7 @@ void Menu::menuPrincipal() {
 		}
 
 		std::cout << "1. Ir a un sitio web\n2. Nueva Pestaña\n3. Cerrar Pestaña Actual\n4. Marcadores\n5. Modo Incognito\n6. Busqueda/Filtros\n7. Configuración\n8. Salir\n\nIngrese una opcion: ";
-		std::cin >> opcion;
+		if (!leerOpcion(opcion)) { continue; }
 
 		switch (opcion) {
 		case 1: irSitioWeb();
@@ -126,19 +131,21 @@ void Menu::cambiarConfiguracion() {
 		std::cout << "Maximo de Sitios en el Historial: " << configuracion.getMaximoSitiosHistorial() << "\n";
 		std::cout << "----------------------------------------------------\n\n";
 
+	
 		std::cout << "1. Cambiar el tiempo de expiracion del historial\n2. Cambiar la cantidad maxima de sitios que guarda el historial\n3. Volver\n\nIngrese una opcion: ";
-		std::cin >> opcion;
+		if (!leerOpcion(opcion)) { continue; }
+
 
 		switch (opcion) {
 		case 1:
 			std::cout << "Ingrese el nuevo tiempo de expiracion del historial en segundos: ";
-			std::cin >> aux;
+			if (!leerOpcion(aux)) { continue; }
 			configuracion.setTiempoExpiracionHistorial(std::chrono::seconds(aux));
 			break;
 
 		case 2:
 			std::cout << "Ingrese la nueva cantidad maxima de sitios que guarda el historial: ";
-			std::cin >> aux;
+			if (!leerOpcion(aux)) { continue; }
 			configuracion.setMaximoSitiosHistorial(aux);
 			break;
 
@@ -152,3 +159,15 @@ void Menu::cambiarConfiguracion() {
 
 	}
 }
+
+bool Menu::leerOpcion(int& opcion) {
+	if (!(std::cin >> opcion) || std::cin.peek() != '\n') {
+		std::cerr << "Error: Debes ingresar un número válido.\n";
+		std::cin.clear();  // Limpia el estado de error
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Descartar cualquier entrada incorrecta
+		system("PAUSE");
+		return false;
+	}
+	return true;
+}
+

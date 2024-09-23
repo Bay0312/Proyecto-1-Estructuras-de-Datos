@@ -1,7 +1,10 @@
 #include "Tab.h"
 
 Tab::Tab() : historial{ new Historial() }, nombre{ "Tab Nuevo" }, abierto{ nullptr }, modoIncognito{ false } {}
-Tab::~Tab() { delete historial; }
+Tab::~Tab() { 
+	delete historial; 
+	if(abierto != nullptr) delete abierto;
+}
 
 
 std::string Tab::getNombre() {
@@ -21,14 +24,24 @@ void Tab::irSitio(SitioWeb* sitio) {
 	if (abierto != nullptr) {
 		delete abierto;
 	}
-	abierto = new SitioWeb(sitio->getUrl(), sitio->getDominio(), sitio->getTitulo()); //Con eso identificamos la pagina actualmente abierta
+
+	abierto = sitio;
+	
 
 	if (!modoIncognito) { //Unicamente guardamos en historial si no estamos en modo incognito
 		if (historial->limpiarHistorial() == 1) { //Nos aseguramos de quitar las paginas expiradas si es que hay.
 			//Si se eliminó la pagina en la que estaba el iterador cuando retrocedimos, entonces se asigna al principio al momento de ir a una nueva para no perder todos los datos
 			historial->AsignaInicioIteradorActual();
 		}
-		SitioWeb* nuevo = new SitioWeb(sitio->getUrl(), sitio->getDominio(), sitio->getTitulo()); //Nuevo puntero a sitioweb para guardarlo en historial (Se crea uno nuevo para evitar problemas al borrar el historial)
+		SitioWeb* nuevo = nullptr;
+		try {
+			nuevo = new SitioWeb(sitio->getUrl(), sitio->getDominio(), sitio->getTitulo()); //Nuevo puntero a SitioWeb para guardarlo en historial (Se crea uno nuevo para evitar problemas al borrar el historial)
+		}
+		catch (const std::bad_alloc& e) {
+			std::cerr << "Error de memoria al intentar crear el SitioWeb para historial: " << e.what() << std::endl;
+			return;
+		}
+		
 
 		if (historial->getVisitados().size() != 0) {
 			//Si no estamos en el primer sitio significa que volvimos, por lo que, si tratamos de ir a un nuevo sitio, borramos los sitios que estan adelante, igual que lo hace un navegador real.

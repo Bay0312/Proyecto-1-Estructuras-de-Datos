@@ -10,7 +10,6 @@ class Menu {
 private:
 	Navegador* navegador;
 	std::map<std::string, SitioWeb*> sitiosDisponibles;
-	//std::vector<SitioWeb*> sitiosDisponibles;
 
 public:
 	Menu();
@@ -21,6 +20,7 @@ public:
 	void cargarSitios(std::string);
 	SitioWeb* traeSitioWeb(std::string);
 	void cambiarConfiguracion();
+	bool leerOpcion(int&);
 };
 
 #endif // !MENU_H

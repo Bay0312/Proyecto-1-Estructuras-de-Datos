@@ -7,7 +7,6 @@ class Configuracion { // Singleton para la configuracion del navegador
 private:
     Configuracion();
 	Configuracion(int, int);
-    ~Configuracion();
 	static Configuracion* instancia;
 	std::chrono::seconds tiempoExpiracionHistorial;
 	int maximoSitiosHistorial;
@@ -15,6 +14,7 @@ private:
 
 public:
 	static Configuracion& getInstancia();
+	static void destruirInstancia();
 	std::chrono::duration<int> getTiempoExpiracionHistorial();
 	void setTiempoExpiracionHistorial(std::chrono::duration<int>);
 	int getMaximoSitiosHistorial();
