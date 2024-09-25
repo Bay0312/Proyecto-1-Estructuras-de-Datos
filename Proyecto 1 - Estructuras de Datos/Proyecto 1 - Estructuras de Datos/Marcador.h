@@ -2,6 +2,8 @@
 #define MARCADOR_H
 #include <string>
 #include <vector>
+#include <conio.h>
+#include <sstream>
 
 class Marcador {
 private:

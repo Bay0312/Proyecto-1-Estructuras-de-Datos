@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+
 #include "Navegador.h"
 
 class Menu {
@@ -16,6 +17,8 @@ public:
 	~Menu();
 
 	void menuPrincipal();
+	void menuMarcadores();
+	void navegacionConTeclas();
 	void irSitioWeb();
 	void cargarSitios(std::string);
 	SitioWeb* traeSitioWeb(std::string);

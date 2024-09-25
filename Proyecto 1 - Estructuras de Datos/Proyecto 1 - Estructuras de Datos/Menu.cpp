@@ -13,7 +13,7 @@ Menu::~Menu() {
 void Menu::menuPrincipal() {
 	int opcion = 0;
 
-	while (opcion != 8) {
+	while (opcion != 9) {
 		system("CLS");
 		std::cout << "---------Microsoft Edge---------\n\t < Pestaña " << navegador->numeroTab() << " >\n";
 		if (navegador->getModoIncognitoTabActual()) std::cout << "\t(Estas Viajando en Modo Incognito)\n\n";
@@ -27,7 +27,7 @@ void Menu::menuPrincipal() {
 			std::cout << " | " << navegador->getSitioActual()->getUrl() << " |\n\n";
 		}
 
-		std::cout << "1. Ir a un sitio web\n2. Nueva Pestaña\n3. Cerrar Pestaña Actual\n4. Marcadores\n5. Modo Incognito\n6. Busqueda/Filtros\n7. Configuración\n8. Salir\n\nIngrese una opcion: ";
+		std::cout << "1. Ir a un sitio web\n2. Nueva Pestaña\n3. Cerrar Pestaña Actual\n4. Marcadores\n5. Modo Incognito\n6. Busqueda/Filtros\n7. Configuración\n8. Navegación con teclas\n9. Salir\n\nIngrese una opcion: ";
 		if (!leerOpcion(opcion)) { continue; }
 
 		switch (opcion) {
@@ -40,7 +40,7 @@ void Menu::menuPrincipal() {
 		case 3: navegador->cerrarTab();
 			break;
 
-		case 4: //Marcadores
+		case 4: menuMarcadores();
 			break;
 
 		case 5: navegador->cambiarModoIncognitoTabActual();
@@ -53,29 +53,125 @@ void Menu::menuPrincipal() {
 			break;
 
 		case 8:
-			system("CLS");
-			std::cout << "\nEl navegador se ha cerrado!\n";
+			navegacionConTeclas();
 			break;
 
 		case 9:
-			navegador->avanzarEnHistorial();
-			break;
-
-		case 10:
-			navegador->retrocederEnHistorial();
-			break;
-
-		case 11:
-			navegador->avanzarEnTabs();
-			break;
-
-		case 12:
-			navegador->retrocederEnTabs();
+			system("CLS");
+			std::cout << "\nEl navegador se ha cerrado!\n";
 			break;
 
 		default: std::cout << "\nLa opcion ingresada no existe. Intente nuevamente.\n";
 			system("PAUSE");
 			break;
+		}
+	}
+}
+
+void Menu::menuMarcadores() {
+	int opcion = 0;
+	std::string titulo;
+
+	while (opcion != 4) {
+		system("CLS");
+		std::cout << "---------Microsoft Edge---------\n\t < Pestaña " << navegador->numeroTab() << " >\n";
+		if (navegador->getModoIncognitoTabActual()) std::cout << "\t(Estas Viajando en Modo Incognito)\n\n";
+		else std::cout << "\n\n";
+
+		if (navegador->getSitioActual() == nullptr) {
+			std::cout << "Trata de acceder a un sitio web!\n\n";
+		}
+		else {
+			std::cout << " | " << navegador->getSitioActual()->getTitulo() << " |\n";
+			std::cout << " | " << navegador->getSitioActual()->getUrl() << " |\n\n";
+		}
+
+		std::cout << "---------Marcadores---------\n";
+
+		std::cout << "1. Agregar sitio actual como marcador. \n2. Agregar tag. \n3. Buscar marcadores. \n4. Salir \n\nIngrese una opcion: "; std::cin >> opcion;
+
+		switch (opcion) {
+		case 1:
+			system("CLS");
+			navegador->agregarMarcador(navegador->getSitioActual());
+			std::cout << navegador->toStringMarcadores();
+			system("pause");
+			break;
+
+		case 2:
+			system("CLS");
+			navegador->agregarEtiquetas(navegador->getSitioActual());
+			std::cout << navegador->toStringMarcadores();
+			system("pause");
+			break;
+
+		case 3:
+			system("CLS");
+			std::cout << "---------Buscar Marcador---------\n\n";
+			std::cout << "Ingrese el titulo del marcador que desea buscar: "; std::cin >> titulo;
+
+			navegador->buscarMarcadores(titulo);
+			system("pause");
+
+			break;
+
+		default: break;
+		}
+
+	}
+}
+
+void Menu::navegacionConTeclas() {
+	while (true) {
+		system("CLS");
+		std::cout << "---------Microsoft Edge---------\n\t < Pestaña " << navegador->numeroTab() << " >\n";
+		if (navegador->getModoIncognitoTabActual()) std::cout << "\t(Estas Viajando en Modo Incognito)\n\n";
+		else std::cout << "\n\n";
+
+		if (navegador->getSitioActual() == nullptr) {
+			std::cout << "Trata de acceder a un sitio web!\n\n";
+		}
+		else {
+			std::cout << " | " << navegador->getSitioActual()->getTitulo() << " |\n";
+			std::cout << " | " << navegador->getSitioActual()->getUrl() << " |\n\n";
+		}
+
+		int a = _getch();
+
+		if (a == 0 || a == 224) {
+			a = _getch();
+
+			switch (a) {
+			case 72:
+				std::cout << "You pressed the UP arrow key.\n";
+				navegador->avanzarEnTabs();
+				system("pause");
+				break;
+			case 80:
+				std::cout << "You pressed the DOWN arrow key.\n";
+				navegador->retrocederEnTabs();
+				system("pause");
+				break;
+			case 75:
+				std::cout << "You pressed the LEFT arrow key.\n";
+				navegador->retrocederEnHistorial();
+				system("pause");
+				break;
+			case 77:
+				std::cout << "You pressed the RIGHT arrow key.\n";
+				navegador->avanzarEnHistorial();
+				system("pause");
+				break;
+			default:
+				std::cout << "Unknown special key pressed.\n";
+			}
+		}
+		else if (a == 27) {
+			std::cout << "Exiting...\n";
+			break;
+		}
+		else {
+			std::cout << "You pressed a non-arrow key: " << a << "\n";
 		}
 	}
 }

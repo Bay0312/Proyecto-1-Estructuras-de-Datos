@@ -10,7 +10,8 @@ class Navegador {
 private:
 	std::list<Tab*> tabs;
 	std::list<Tab*>::iterator iterActual;
-	//std::vector<Marcador*> marcadores;
+	std::list<Marcador*> marcadores;
+	std::list<Marcador*>::iterator iterMarcadores;
 	
 public:
 	Navegador();
@@ -34,7 +35,11 @@ public:
 	void avanzarEnTabs();
 	void retrocederEnTabs();
 	
+	void agregarMarcador(SitioWeb*);
+	void agregarEtiquetas(SitioWeb*);
+	void buscarMarcadores(std::string);
 
+	std::string toStringMarcadores();
 
 
 
