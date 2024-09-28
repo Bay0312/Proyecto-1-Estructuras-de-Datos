@@ -10,11 +10,10 @@ Navegador::~Navegador() {
 	for (Tab* tab : tabs) {
 		delete tab;
 	}
-	for (auto marcador : marcadores) {
+	for (Marcador* marcador : marcadores) {
 		delete marcador;
 	}
-	delete& marcadores;
-	Configuracion::destruirInstancia();  
+	Configuracion::destruirInstancia();
 }
 
 std::list<Tab*> Navegador::getTabs() { return tabs; }
