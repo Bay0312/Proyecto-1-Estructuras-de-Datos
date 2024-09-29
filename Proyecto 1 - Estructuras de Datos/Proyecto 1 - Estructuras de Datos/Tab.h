@@ -2,6 +2,7 @@
 #define TAB_H
 #include "Historial.h"
 #include <iostream>
+#include <fstream>
 
 class Tab {
 private:
@@ -24,6 +25,8 @@ public:
 	void avanzarEnHistorial();
 	void retrocederEnHistorial();
 	std::string toString();
+	void guardar(std::ofstream& out);
+	Tab* recuperar(std::ifstream& in);
 };
 
 #endif // !TAB_H

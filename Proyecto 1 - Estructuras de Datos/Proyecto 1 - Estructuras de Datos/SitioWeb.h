@@ -1,6 +1,7 @@
 #ifndef SITIOWEB_H
 #define SITIOWEB_H
 #include <string>
+#include <fstream>
 
 class SitioWeb {
 private:
@@ -22,6 +23,9 @@ public:
 	void setTitulo(std::string);
 	
 	std::string toString();
+
+	void guardar(std::ofstream& out);
+	SitioWeb* recuperar(std::ifstream& in);
 
 };
 

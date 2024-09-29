@@ -24,6 +24,12 @@ public:
 	SitioWeb* traeSitioWeb(std::string);
 	void cambiarConfiguracion();
 	bool leerOpcion(int&);
+	void menuBusqueda();
+	void gestionarSesion();
+	void filtrarSitiosPorLetra();
+	void buscarSitioPorPalabra();
+	void guardarSesion();
+	void recuperarSesion();
 };
 
 #endif // !MENU_H

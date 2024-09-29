@@ -17,6 +17,10 @@ public:
 	Navegador();
 	~Navegador();
 
+	std::list<Tab*>& gettTabs();
+
+	void setTabActual(std::list<Tab*>::iterator nuevoIter);
+
 	std::list<Tab*> getTabs();
 	bool getModoIncognitoTabActual();
 	SitioWeb* getSitioActual();
@@ -40,6 +44,9 @@ public:
 	void buscarMarcadores(std::string);
 
 	std::string toStringMarcadores();
+
+	void guardar(std::ofstream& out);
+	Navegador* recuperar(std::ifstream& in);
 
 
 
