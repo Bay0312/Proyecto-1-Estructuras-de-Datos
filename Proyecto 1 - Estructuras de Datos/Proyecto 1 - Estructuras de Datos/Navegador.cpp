@@ -85,12 +85,20 @@ void Navegador::retrocederEnTabs() {
 
 void Navegador::agregarMarcador(SitioWeb* sitio) {
 	if (sitio != nullptr) {
+		// Recorre los marcadores para verificar si el sitio ya existe
+		for (const auto& marcador : marcadores) {
+			if (marcador->getUrl() == sitio->getUrl()) {
+				return;
+			}
+		}
+
 		std::vector<std::string> etiquetas;
 		Marcador* marcador = new Marcador(sitio->getUrl(), sitio->getTitulo(), etiquetas);
 		marcadores.push_back(marcador);
 		++iterMarcadores;
 	}
 }
+
 
 void Navegador::agregarEtiquetas(SitioWeb* sitio) {
 	if (sitio != nullptr) {
@@ -123,7 +131,7 @@ void Navegador::buscarMarcadores(std::string titulo) {
 		}
 	}
 
-	std::cout << "Marcador no encontrado con el título: \n";
+	std::cout << "Marcador no encontrado con el título: " << titulo << std::endl;
 }
 
 
@@ -173,10 +181,10 @@ Navegador* Navegador::recuperar(std::ifstream& in) {
 
 	if (numTabs > 0) {
 		// Eliminar la pestaña vacía que se creó por defecto
-		if (!tabs.empty()) {
-			delete* tabs.begin(); 
-			tabs.erase(tabs.begin());
+		for (Tab* tab : tabs) {
+			delete tab; // Liberar cada pestaña
 		}
+		tabs.clear();
 
 		for (size_t i = 0; i < numTabs; ++i) {
 			Tab* tab = new Tab();

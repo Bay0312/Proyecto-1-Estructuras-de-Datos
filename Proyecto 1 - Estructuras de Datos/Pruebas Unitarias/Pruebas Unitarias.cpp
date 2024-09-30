@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "Navegador.h"
+#include "../Proyecto 1 - Estructuras de Datos/Navegador.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
