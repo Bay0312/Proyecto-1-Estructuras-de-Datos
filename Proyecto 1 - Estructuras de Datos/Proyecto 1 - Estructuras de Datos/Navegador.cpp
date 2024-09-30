@@ -46,7 +46,7 @@ void Navegador::irSitio(SitioWeb* sitio) {
 void Navegador::nuevaTab() {
 	try {
 		tabs.push_back(new Tab());
-		++iterActual; //Se mueve al nuevo tab
+		iterActual = std::prev(tabs.end()); // Se mueve al nuevo tab
 	}
 	catch (const std::bad_alloc& e) {
 		std::cerr << "Error de memoria al intentar crear una pestaña nueva: " << e.what() << std::endl;
