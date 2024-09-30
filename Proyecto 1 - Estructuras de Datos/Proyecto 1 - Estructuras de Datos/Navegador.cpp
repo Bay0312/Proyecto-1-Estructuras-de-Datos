@@ -13,9 +13,13 @@ Navegador::~Navegador() {
 	for (Marcador* marcador : marcadores) {
 		delete marcador;
 	}
-	Configuracion::destruirInstancia();
+	//delete& marcadores;
+	Configuracion::destruirInstancia();  
 }
 
+
+std::list<Tab*>& Navegador::gettTabs() {	return tabs;}
+void Navegador::setTabActual(std::list<Tab*>::iterator nuevoIter) {	iterActual = nuevoIter;}
 std::list<Tab*> Navegador::getTabs() { return tabs; }
 bool Navegador::getModoIncognitoTabActual() { return (*iterActual)->getModoIncognito(); }
 SitioWeb* Navegador::getSitioActual() { return (*iterActual)->getSitioActual(); }
@@ -132,4 +136,63 @@ std::string Navegador::toStringMarcadores() {
 	}
 
 	return s.str();
+}
+
+void Navegador::guardar(std::ofstream& out) {
+	size_t numTabs = tabs.size();
+	out.write(reinterpret_cast<char*>(&numTabs), sizeof(numTabs));
+
+	for (Tab* tab : tabs) {
+		tab->guardar(out); 
+	}
+
+	int indexTabActual = std::distance(tabs.begin(), iterActual);
+	out.write(reinterpret_cast<char*>(&indexTabActual), sizeof(indexTabActual));
+
+	size_t numMarcadores = marcadores.size();
+	out.write(reinterpret_cast<char*>(&numMarcadores), sizeof(numMarcadores));
+	for (Marcador* marcador : marcadores) {
+		marcador->guardar(out);
+	}
+
+	int indexMarcadorActual = std::distance(marcadores.begin(), iterMarcadores);
+	out.write(reinterpret_cast<char*>(&indexMarcadorActual), sizeof(indexMarcadorActual));
+}
+
+Navegador* Navegador::recuperar(std::ifstream& in) {
+	size_t numTabs;
+	in.read(reinterpret_cast<char*>(&numTabs), sizeof(numTabs));
+
+	if (numTabs > 0) {
+		// Eliminar la pestaña vacía que se creó por defecto
+		if (!tabs.empty()) {
+			delete* tabs.begin();
+			tabs.erase(tabs.begin());
+		}
+
+		for (size_t i = 0; i < numTabs; ++i) {
+			Tab* tab = new Tab();
+			tab->recuperar(in);  // Método recuperar dentro de la clase Tab
+			tabs.push_back(tab);
+		}
+	}
+
+	int indexTabActual;
+	in.read(reinterpret_cast<char*>(&indexTabActual), sizeof(indexTabActual));
+	iterActual = std::next(tabs.begin(), indexTabActual);
+
+	size_t numMarcadores;
+	in.read(reinterpret_cast<char*>(&numMarcadores), sizeof(numMarcadores));
+
+	for (size_t i = 0; i < numMarcadores; ++i) {
+		Marcador* marcador = new Marcador();
+		marcador->recuperar(in); 
+		marcadores.push_back(marcador);
+	}	
+
+	int indexMarcadorActual;
+	in.read(reinterpret_cast<char*>(&indexMarcadorActual), sizeof(indexMarcadorActual));
+	iterMarcadores = std::next(marcadores.begin(), indexMarcadorActual);
+
+	return this;
 }

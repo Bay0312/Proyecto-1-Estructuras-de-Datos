@@ -91,3 +91,39 @@ void Tab::cambiaModoIncognito(){ modoIncognito = !modoIncognito; }
 std::string Tab::toString() {
 	return historial->toString();
 }
+
+void Tab::guardar(std::ofstream& out) {
+	size_t nombreLength = nombre.size();
+	out.write(reinterpret_cast<char*>(&nombreLength), sizeof(nombreLength));
+	out.write(nombre.c_str(), nombreLength);
+
+	out.write(reinterpret_cast<char*>(&modoIncognito), sizeof(modoIncognito));
+
+	bool tieneSitioAbierto = (abierto != nullptr);
+	out.write(reinterpret_cast<char*>(&tieneSitioAbierto), sizeof(tieneSitioAbierto));
+	if (tieneSitioAbierto) {
+		abierto->guardar(out);
+	}
+	historial->guardar(out);
+}
+
+Tab* Tab::recuperar(std::ifstream& in) {
+	size_t nombreLength;
+	in.read(reinterpret_cast<char*>(&nombreLength), sizeof(nombreLength));
+	nombre.resize(nombreLength);
+	in.read(&nombre[0], nombreLength);
+
+	in.read(reinterpret_cast<char*>(&modoIncognito), sizeof(modoIncognito));
+
+	bool tieneSitioAbierto;
+	in.read(reinterpret_cast<char*>(&tieneSitioAbierto), sizeof(tieneSitioAbierto));
+	if (tieneSitioAbierto) {
+		abierto = new SitioWeb();
+		abierto->recuperar(in);
+	}
+	else {
+		abierto = nullptr;
+	}
+	historial->recuperar(in);
+	return this;
+}

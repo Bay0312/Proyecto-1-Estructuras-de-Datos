@@ -4,6 +4,7 @@
 #include <vector>
 #include <conio.h>
 #include <sstream>
+#include <fstream>
 
 class Marcador {
 private:
@@ -24,6 +25,8 @@ public:
 	void setEtiquetas(std::vector<std::string>);
 
 	std::string toString();
+	void guardar(std::ofstream& out);
+	Marcador* recuperar(std::ifstream& in);
 };
 
 #endif // !MARCADOR_H

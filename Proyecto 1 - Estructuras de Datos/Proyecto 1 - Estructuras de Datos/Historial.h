@@ -3,6 +3,7 @@
 #include "SitioWeb.h"
 #include "Configuracion.h"
 #include <deque>
+#include <fstream>
 
 
 class Historial {
@@ -31,6 +32,9 @@ public:
 	int limpiarHistorial();
 	bool cambiaTamanioHistorial();
 	std::string toString();
+
+	void guardar(std::ofstream& out);
+	Historial* recuperar(std::ifstream& in);
 };
 
 #endif // !HISTORIAL_H

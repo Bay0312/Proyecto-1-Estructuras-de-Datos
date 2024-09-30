@@ -113,5 +113,40 @@ std::string Historial::toString() {
 	return str;
 }
 
+void Historial::guardar(std::ofstream& out) {
+	size_t numSitios = visitados.size();
+	out.write(reinterpret_cast<char*>(&numSitios), sizeof(numSitios));
 
+	for (const auto& sitio : visitados) {
+		sitio.first->guardar(out);
+		auto timeSinceEpoch = std::chrono::duration_cast<std::chrono::nanoseconds>(sitio.second.time_since_epoch()).count();
+		out.write(reinterpret_cast<char*>(&timeSinceEpoch), sizeof(timeSinceEpoch));
+	}
+
+	size_t posIterActual = std::distance(visitados.begin(), iterActual);
+	out.write(reinterpret_cast<char*>(&posIterActual), sizeof(posIterActual));
+}
+
+Historial* Historial::recuperar(std::ifstream& in) {
+	size_t numSitios;
+	in.read(reinterpret_cast<char*>(&numSitios), sizeof(numSitios));
+	visitados.clear();
+
+	for (size_t i = 0; i < numSitios; ++i) {
+		SitioWeb* sitio = new SitioWeb();
+		sitio->recuperar(in);
+		int64_t timeSinceEpoch;
+		in.read(reinterpret_cast<char*>(&timeSinceEpoch), sizeof(timeSinceEpoch));
+		std::chrono::steady_clock::time_point timePoint = std::chrono::steady_clock::time_point(std::chrono::nanoseconds(timeSinceEpoch));
+
+		visitados.push_back({ sitio, timePoint });
+	}
+
+	size_t posIterActual;
+	in.read(reinterpret_cast<char*>(&posIterActual), sizeof(posIterActual));
+	iterActual = visitados.begin();
+	std::advance(iterActual, posIterActual);
+
+	return this;
+}
 
