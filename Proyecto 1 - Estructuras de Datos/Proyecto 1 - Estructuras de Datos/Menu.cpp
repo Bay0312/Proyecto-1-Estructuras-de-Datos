@@ -406,12 +406,8 @@ void Menu::recuperarSesion() {
 		return;
 	}
 
-	//delete navegador;  
-	navegador = new Navegador();
 	navegador->recuperar(inFile);
 	inFile.close();
 
 	std::cout << "La sesión anterior se ha recuperado exitosamente.\n";
 }
-
-

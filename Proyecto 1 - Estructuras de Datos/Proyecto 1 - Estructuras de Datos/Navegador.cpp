@@ -6,6 +6,7 @@ Navegador::Navegador() : tabs{ std::list<Tab*>() } {
 	marcadores.push_back(new Marcador());
 	iterMarcadores = marcadores.begin();
 }
+
 Navegador::~Navegador() {
 	for (Tab* tab : tabs) {
 		delete tab;
@@ -13,7 +14,6 @@ Navegador::~Navegador() {
 	for (Marcador* marcador : marcadores) {
 		delete marcador;
 	}
-	//delete& marcadores;
 	Configuracion::destruirInstancia();  
 }
 
@@ -56,10 +56,18 @@ void Navegador::nuevaTab() {
 
 void Navegador::cerrarTab() {
 	if (tabs.size() > 1) {
-		std::list<Tab*>::iterator aux = std::prev(iterActual);
-		delete* iterActual;
-		iterActual = tabs.erase(iterActual);
-		iterActual = aux;
+		std::list<Tab*>::iterator aux = iterActual;
+
+		// Si el iterador actual está en la primera posición
+		if (iterActual == tabs.begin()) {
+			++iterActual;  // Avanzamos al siguiente elemento
+		}
+		else {
+			--iterActual;  // Retrocedemos al anterior elemento
+		}
+
+		delete* aux;
+		tabs.erase(aux);
 	}
 }
 
@@ -166,7 +174,7 @@ Navegador* Navegador::recuperar(std::ifstream& in) {
 	if (numTabs > 0) {
 		// Eliminar la pestaña vacía que se creó por defecto
 		if (!tabs.empty()) {
-			delete* tabs.begin();
+			delete* tabs.begin(); 
 			tabs.erase(tabs.begin());
 		}
 
